@@ -1,0 +1,19 @@
+python-docx
+docx2pdf
+
+
+crewai
+crewai_tools
+load_dotenv
+google-generativeai ##for gemini model
+
+langchain-huggingface
+
+
+# reportlab
+
+
+
+# kroki ## for mermaid to diagram visual ( pdf)
+# fpdf 
+# pillow

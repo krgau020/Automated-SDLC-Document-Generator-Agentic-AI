@@ -1,0 +1,445 @@
+```markdown
+# System Design Document: Mental Health Support Chatbot
+
+**Version:** 1.0
+**Date:** October 26, 2023
+
+## 1. Introduction
+
+This document outlines the system design for a mental health support chatbot aimed at young adults (18-30) dealing with anxiety and stress. The chatbot will provide 24/7 support and resources. This document builds upon the Project Design Document (PDD) and provides a detailed technical specification for the development team.
+
+## 2. Technical Architecture
+
+The chatbot will be a multi-tiered application consisting of the following components:
+
+*   **Frontend:** User interface for interacting with the chatbot (web application).
+*   **Backend:** API layer for handling user requests and business logic.
+*   **Database:** Stores user data, resources, and conversation history.
+*   **NLP Engine:** Processes user input and generates appropriate responses.
+*   **Recommendation Engine:** Provides personalized recommendations based on user input and assessed needs.
+*   **Email Service:** Handles sending email verification and password reset emails.
+
+### 2.1. System Diagram
+
+```mermaid
+graph LR
+    subgraph User
+        A[User]
+    end
+
+    subgraph Frontend
+        B[Login Page]
+        C[Signup Page]
+        D[Chat Interface]
+        E[Password Reset Page]
+        F[Account Settings Page]
+    end
+
+    subgraph Backend
+        G[Authentication Service]
+        H[Chat Service]
+        I[User Management Service]
+        J[Password Reset Service]
+        K[Account Deletion Service]
+        L[API Gateway]
+    end
+
+    subgraph Database
+        M[User Database]
+        N[Chat History Database]
+    end
+
+    subgraph NLP Engine
+        O[NLP Engine]
+    end
+
+    subgraph Recommendation Engine
+        P[Recommendation Engine]
+    end
+
+    %% Account Creation Flow
+    A -- "1. Enters signup details" --> C
+    C -- "2. Sends signup request" --> L
+    L -- "3. Routes to User Management Service" --> I
+    I -- "4. Validates user data" --> I
+    I -- "5. Creates user account" --> M
+    M -- "6. Account created confirmation" --> I
+    I -- "7. Returns success message" --> L
+    L -- "8. Returns success to Frontend" --> C
+    C -- "9. Account created notification" --> A
+
+    %% Login Flow
+    A -- "1. Enters login credentials" --> B
+    B -- "2. Sends login request" --> L
+    L -- "3. Routes to Authentication Service" --> G
+    G -- "4. Authenticates user" --> M
+    M -- "5. Returns user details" --> G
+    G -- "6. Generates authentication token" --> L
+    L -- "7. Returns token to Frontend" --> B
+    B -- "8. Stores token and redirects to Chat Interface" --> D
+    D -- "9. User logged in" --> A
+
+    %% Chat Interaction Flow
+    A -- "1. Sends message" --> D
+    D -- "2. Sends message to Backend" --> L
+    L -- "3. Routes to Chat Service" --> H
+    H -- "4. Stores message in Chat History" --> N
+    H -- "5. Sends message to NLP Engine" --> O
+    O -- "6. Analyzes message and identifies intent" --> H
+    H -- "7. Sends message and intent to Recommendation Engine" --> P
+    P -- "8. Generates relevant recommendations" --> H
+    H -- "9. Formats response with recommendations" --> L
+    L -- "10. Returns response to Frontend" --> D
+    D -- "11. Displays response to User" --> A
+
+    %% Password Reset Flow
+    A -- "1. Requests password reset" --> E
+    E -- "2. Sends email request" --> L
+    L -- "3. Routes to Password Reset Service" --> J
+    J -- "4. Verifies user email" --> M
+    M -- "5. Generates reset token" --> J
+    J -- "6. Sends reset link to user email" --> A
+    A -- "7. Clicks reset link and enters new password" --> E
+    E -- "8. Sends new password and token" --> L
+    L -- "9. Routes to Password Reset Service" --> J
+    J -- "10. Validates token and updates password" --> M
+    M -- "11. Password updated confirmation" --> J
+    J -- "12. Returns success message" --> L
+    L -- "13. Returns success to Frontend" --> E
+    E -- "14. Password reset confirmation" --> A
+
+    %% Account Deletion Flow
+    A -- "1. Requests account deletion" --> F
+    F -- "2. Sends deletion request" --> L
+    L -- "3. Routes to Account Deletion Service" --> K
+    K -- "4. Authenticates user" --> M
+    M -- "5. Verifies user account" --> K
+    K -- "6. Deletes user account and data" --> M
+    N -- "7. Deletes user chat history" --> K
+    K -- "8. Account deletion confirmation" --> L
+    L -- "9. Returns success message" --> F
+    F -- "10. Account deletion confirmation" --> A
+```
+
+### 2.2. Component Details
+
+#### 2.2.1. Frontend
+
+*   **Technology:** React, JavaScript, HTML, CSS
+*   **Responsibilities:**
+    *   Provides the user interface for interacting with the chatbot.
+    *   Handles user input and displays chatbot responses.
+    *   Manages user authentication and authorization.
+    *   Displays mental health resources and personalized recommendations.
+*   **Communication:** Communicates with the backend API via HTTP requests.
+
+#### 2.2.2. Backend
+
+*   **Technology:** Python (Flask/Django) or Node.js (Express)
+*   **Responsibilities:**
+    *   Handles user requests and business logic.
+    *   Authenticates and authorizes users.
+    *   Interacts with the database to store and retrieve data.
+    *   Communicates with the NLP engine to process user input.
+    *   Generates personalized recommendations.
+*   **Communication:**
+    *   Receives HTTP requests from the frontend.
+    *   Interacts with the database using an ORM (e.g., SQLAlchemy or Mongoose).
+    *   Communicates with the NLP engine via API calls.
+    *   Communicates with the Recommendation Engine via API calls.
+
+#### 2.2.3. Database
+
+*   **Technology:** PostgreSQL or MongoDB
+*   **Responsibilities:**
+    *   Stores user data, mental health resources, and conversation history.
+    *   Provides data persistence and retrieval.
+*   **Communication:** Interacted with by the backend API using an ORM.
+
+#### 2.2.4. NLP Engine
+
+*   **Technology:** Dialogflow or Rasa
+*   **Responsibilities:**
+    *   Processes user input and understands the user's intent.
+    *   Generates appropriate responses.
+*   **Communication:** Receives API calls from the backend and returns processed responses.
+
+#### 2.2.5. Recommendation Engine
+
+*   **Technology:** Python, scikit-learn, TensorFlow, PyTorch
+*   **Responsibilities:**
+    *   Analyzes user data and identifies relevant patterns.
+    *   Matches users with appropriate mental health resources.
+    *   Generates personalized recommendations based on user preferences and risk factors.
+*   **Communication:** Receives API calls from the backend and returns personalized recommendations.
+
+#### 2.2.6. Email Service
+
+*   **Technology:** SendGrid, Mailgun, or AWS SES
+*   **Responsibilities:**
+    *   Sends email verification and password reset emails.
+*   **Communication:** Called by the backend API to send emails.
+
+## 3. Data Flow
+
+The data flow within the chatbot system can be described as follows:
+
+1.  **User Interaction:** The user interacts with the chatbot through the frontend (web application).
+2.  **Request to Backend:** The frontend sends HTTP requests to the backend API to perform various actions (e.g., login, send message, access resources).
+3.  **Backend Processing:** The backend processes the request, which may involve:
+    *   Authenticating the user.
+    *   Interacting with the database to retrieve or store data.
+    *   Communicating with the NLP engine to process user input.
+    *   Generating personalized recommendations using the recommendation engine.
+4.  **Response to Frontend:** The backend sends an HTTP response back to the frontend, containing the requested data or the result of the action.
+5.  **Display to User:** The frontend displays the response to the user.
+
+## 4. Database Schema
+
+The chatbot system will utilize a relational database (PostgreSQL) to store user data, resource metadata, and conversation history. The following tables will be used:
+
+### 4.1. Users
+
+| Column        | Data Type       | Constraints                     | Description                               |
+| ------------- | --------------- | ------------------------------- | ----------------------------------------- |
+| id            | SERIAL          | PRIMARY KEY                     | Unique identifier for the user          |
+| email         | VARCHAR(255)    | UNIQUE, NOT NULL                | User's email address                      |
+| password      | VARCHAR(255)    | NOT NULL                        | Hashed password                           |
+| verified      | BOOLEAN         | NOT NULL DEFAULT FALSE          | Indicates whether the user's email is verified |
+| created_at    | TIMESTAMP       | NOT NULL DEFAULT CURRENT_TIMESTAMP | Timestamp of account creation             |
+| updated_at    | TIMESTAMP       | NOT NULL DEFAULT CURRENT_TIMESTAMP | Timestamp of last update                  |
+
+### 4.2. Resources
+
+| Column        | Data Type       | Constraints     | Description                               |
+| ------------- | --------------- | --------------- | ----------------------------------------- |
+| id            | SERIAL          | PRIMARY KEY     | Unique identifier for the resource        |
+| title         | VARCHAR(255)    | NOT NULL        | Title of the resource                       |
+| description   | TEXT            |                 | Description of the resource               |
+| url           | VARCHAR(255)    |                 | URL of the resource                         |
+| type          | VARCHAR(50)     |                 | Type of resource (e.g., article, video)   |
+| created_at    | TIMESTAMP       | NOT NULL DEFAULT CURRENT_TIMESTAMP | Timestamp of resource creation            |
+| updated_at    | TIMESTAMP       | NOT NULL DEFAULT CURRENT_TIMESTAMP | Timestamp of last update                  |
+
+### 4.3. Conversations
+
+| Column        | Data Type       | Constraints     | Description                               |
+| ------------- | --------------- | --------------- | ----------------------------------------- |
+| id            | SERIAL          | PRIMARY KEY     | Unique identifier for the conversation    |
+| user_id       | INTEGER         | NOT NULL        | Foreign key referencing the Users table   |
+| start_time    | TIMESTAMP       | NOT NULL DEFAULT CURRENT_TIMESTAMP | Timestamp of conversation start           |
+| end_time      | TIMESTAMP       |                 | Timestamp of conversation end             |
+
+### 4.4. Messages
+
+| Column        | Data Type       | Constraints     | Description                               |
+| ------------- | --------------- | --------------- | ----------------------------------------- |
+| id            | SERIAL          | PRIMARY KEY     | Unique identifier for the message         |
+| conversation_id | INTEGER         | NOT NULL        | Foreign key referencing the Conversations table |
+| user_id       | INTEGER         | NOT NULL        | Foreign key referencing the Users table   |
+| message       | TEXT            | NOT NULL        | Message text                              |
+| timestamp     | TIMESTAMP       | NOT NULL DEFAULT CURRENT_TIMESTAMP | Timestamp of message creation             |
+| is_user       | BOOLEAN         | NOT NULL        | Indicates whether the message was sent by the user |
+
+## 5. API Specifications
+
+The chatbot will expose a RESTful API for communication between the frontend and backend. API endpoints will be secured using JWT authentication.
+
+### 5.1. Authentication API
+
+#### 5.1.1. `POST /api/auth/register`
+
+*   **Description:** Registers a new user.
+*   **Request Body:**
+    ```json
+    {
+      "email": "user@example.com",
+      "password": "password123"
+    }
+    ```
+*   **Response:**
+    ```json
+    {
+      "success": true,
+      "message": "User registered successfully. Please verify your email."
+    }
+    ```
+
+#### 5.1.2. `POST /api/auth/login`
+
+*   **Description:** Logs in an existing user.
+*   **Request Body:**
+    ```json
+    {
+      "email": "user@example.com",
+      "password": "password123"
+    }
+    ```
+*   **Response:**
+    ```json
+    {
+      "success": true,
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    }
+    ```
+
+#### 5.1.3. `POST /api/auth/reset-password`
+
+*   **Description:** Sends a password reset email to the user.
+*   **Request Body:**
+    ```json
+    {
+      "email": "user@example.com"
+    }
+    ```
+*   **Response:**
+    ```json
+    {
+      "success": true,
+      "message": "Password reset email sent successfully."
+    }
+    ```
+
+#### 5.1.4. `POST /api/auth/verify-reset-token`
+
+*   **Description:** Verifies the password reset token.
+*   **Request Body:**
+    ```json
+    {
+      "token": "reset_token"
+    }
+    ```
+*   **Response:**
+    ```json
+    {
+      "success": true,
+      "message": "Token is valid"
+    }
+    ```
+
+#### 5.1.5. `POST /api/auth/update-password`
+
+*   **Description:** Updates the user's password.
+*   **Request Body:**
+    ```json
+    {
+      "token": "reset_token",
+      "password": "new_password"
+    }
+    ```
+*   **Response:**
+    ```json
+    {
+      "success": true,
+      "message": "Password updated successfully."
+    }
+    ```
+
+### 5.2. User API
+
+#### 5.2.1. `GET /api/user/profile`
+
+*   **Description:** Retrieves the user's profile.
+*   **Authentication:** Requires a valid JWT token in the `Authorization` header.
+*   **Response:**
+    ```json
+    {
+      "id": 1,
+      "email": "user@example.com"
+    }
+    ```
+
+#### 5.2.2. `DELETE /api/user/delete`
+
+*   **Description:** Deletes the user's account.
+*   **Authentication:** Requires a valid JWT token in the `Authorization` header.
+*   **Response:**
+    ```json
+    {
+      "success": true,
+      "message": "Account deleted successfully."
+    }
+    ```
+
+### 5.3. Chat API
+
+#### 5.3.1. `POST /api/chat/message`
+
+*   **Description:** Sends a message to the chatbot.
+*   **Authentication:** Requires a valid JWT token in the `Authorization` header.
+*   **Request Body:**
+    ```json
+    {
+      "message": "Hello, I'm feeling anxious."
+    }
+    ```
+*   **Response:**
+    ```json
+    {
+      "response": "I'm sorry to hear that. Here are some resources that might help...",
+      "recommendations": [
+        {
+          "title": "Breathing Exercises for Anxiety",
+          "url": "https://example.com/breathing"
+        }
+      ]
+    }
+    ```
+
+### 5.4. Resource API
+
+#### 5.4.1. `GET /api/resources`
+
+*   **Description:** Retrieves a list of mental health resources.
+*   **Authentication:** Requires a valid JWT token in the `Authorization` header.
+*   **Response:**
+    ```json
+    [
+      {
+        "id": 1,
+        "title": "Understanding Anxiety",
+        "description": "An overview of anxiety and its symptoms.",
+        "url": "https://example.com/anxiety",
+        "type": "article"
+      },
+      {
+        "id": 2,
+        "title": "Guided Meditation for Stress Relief",
+        "description": "A guided meditation to help reduce stress and anxiety.",
+        "url": "https://example.com/meditation",
+        "type": "video"
+      }
+    ]
+    ```
+
+## 6. Security Considerations
+
+*   All API endpoints will be protected using JWT authentication.
+*   User passwords will be hashed using a strong hashing algorithm (e.g., bcrypt).
+*   Sensitive data will be encrypted both in transit (using HTTPS) and at rest (using AES-256 encryption).
+*   Regular security audits will be conducted to identify and address potential vulnerabilities.
+*   Input validation will be implemented to prevent injection attacks.
+*   Output encoding will be used to prevent cross-site scripting (XSS) attacks.
+
+## 7. Monitoring and Logging
+
+*   Comprehensive monitoring and logging mechanisms will be implemented to track user activity and identify potential security issues.
+*   User activity, errors, and security events will be logged.
+*   Monitoring dashboards will be created to visualize key metrics.
+*   Alerts will be configured to notify administrators of critical events.
+
+## 8. Deployment
+
+*   The chatbot will be deployed on a cloud platform (e.g., AWS, Google Cloud Platform, Azure).
+*   The frontend will be deployed as a static website.
+*   The backend will be deployed as a REST API.
+*   The database will be deployed as a managed database service.
+*   The NLP engine and recommendation engine will be deployed as separate services.
+
+## 9. Future Enhancements
+
+*   Integration with external mental health services for direct referrals.
+*   Support for multiple languages.
+*   Personalized chatbot responses based on user personality and preferences.
+*   Proactive support for users at risk of self-harm.
+```

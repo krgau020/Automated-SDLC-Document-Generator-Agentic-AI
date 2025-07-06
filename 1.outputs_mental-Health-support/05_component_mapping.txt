@@ -1,0 +1,131 @@
+```markdown
+## Component Mapping and Technology Selection for Mental Health Support Chatbot
+
+This document outlines the components of the Mental Health Support Chatbot and maps suitable technologies to each, based on the provided Project Design Document (PDD).
+
+**1. Frontend Component:**
+
+*   **Description:** User interface for interacting with the chatbot. Includes account creation, login, chat interface, resource library access, and displaying personalized recommendations.
+*   **Functionalities:**
+    *   User registration and login
+    *   Chat interface (text and multimedia support)
+    *   Displaying mental health resources
+    *   Presenting personalized recommendations
+    *   Account settings and management (including deletion)
+*   **Technology Stack:**
+    *   **Framework:** React (Chosen for component-based architecture, ease of use, and large community support)
+    *   **Language:** JavaScript (Core language for React development)
+    *   **Styling:** HTML, CSS (For structuring and styling the user interface)
+    *   **State Management:** Redux or Context API (For managing application state)
+    *   **UI Library:** Material-UI, Ant Design, or similar (Provides pre-built components for faster development and consistent design)
+*   **Rationale:** React's component-based architecture allows for modular development and easy maintenance. JavaScript is the primary language for frontend development, and HTML/CSS are used for structuring and styling the UI. A state management library helps manage the application's data flow efficiently.
+
+**2. Backend Component (API Layer):**
+
+*   **Description:** Handles user requests, business logic, and data management. Provides APIs for the frontend to interact with the database and NLP engine.
+*   **Functionalities:**
+    *   User authentication and authorization
+    *   Handling chat requests and responses
+    *   Retrieving and managing mental health resources
+    *   Generating personalized recommendations
+    *   User account management (creation, update, deletion)
+    *   Data validation and processing
+*   **Technology Stack:**
+    *   **Framework:** Python (Flask or Django) or Node.js (Express)
+        *   *Python (Flask/Django):* Selected for robust libraries for NLP and machine learning.
+        *   *Node.js (Express):* Offers scalability and performance for handling API requests.
+    *   **Language:** Python or JavaScript (depending on the framework choice)
+    *   **Database Interaction:** SQLAlchemy (Python) or Mongoose (Node.js) (ORM for interacting with the database)
+    *   **API Framework:** RESTful APIs (using Flask RESTful, Django REST framework, or Express)
+    *   **Authentication/Authorization:** JSON Web Tokens (JWT), OAuth 2.0 (For secure authentication and authorization)
+*   **Rationale:** Python with Flask/Django provides a rich ecosystem for NLP and machine learning tasks, while Node.js with Express offers excellent performance and scalability for handling API requests. JWT and OAuth 2.0 ensure secure authentication and authorization.
+
+**3. Database Component:**
+
+*   **Description:** Stores user data, mental health resources, conversation history, and other relevant information.
+*   **Functionalities:**
+    *   Storing user accounts and profiles
+    *   Storing mental health resources (articles, videos, etc.)
+    *   Storing conversation logs
+    *   Storing personalized recommendations
+*   **Technology Stack:**
+    *   **Database:** PostgreSQL or MongoDB
+        *   *PostgreSQL:* Chosen for its reliability, data integrity, and support for complex queries.
+        *   *MongoDB:* Offers flexibility for storing unstructured data like conversation logs.
+    *   **Rationale:** PostgreSQL is a robust relational database suitable for structured data, while MongoDB is a NoSQL database that provides flexibility for storing unstructured data like conversation logs. The choice depends on the specific data storage requirements and the trade-offs between consistency and flexibility. Data at rest will be encrypted using AES-256 encryption. Access to the database will be restricted to authorized personnel only. Regular backups will be performed to prevent data loss.
+
+**4. NLP Engine Component:**
+
+*   **Description:** Processes user input, understands the user's intent, and generates appropriate responses.
+*   **Functionalities:**
+    *   Natural language understanding (NLU)
+    *   Intent recognition
+    *   Entity extraction
+    *   Dialogue management
+    *   Response generation
+*   **Technology Stack:**
+    *   **NLP Platform:** Dialogflow or Rasa
+        *   *Dialogflow:* A user-friendly platform with a graphical interface for building conversational agents.
+        *   *Rasa:* An open-source framework that provides more control and flexibility for building custom NLP models.
+    *   **Language:** Python (for Rasa)
+    *   **Machine Learning Libraries:** TensorFlow, PyTorch (for training custom NLP models with Rasa)
+*   **Rationale:** Dialogflow and Rasa are powerful NLP platforms that enable the chatbot to understand and process natural language, allowing it to engage in meaningful conversations with users. Rasa offers more flexibility for customization and control, while Dialogflow is easier to use for simpler chatbot applications.
+
+**5. Recommendation Engine Component:**
+
+*   **Description:** Provides personalized recommendations to users based on their input, history, and assessed needs.
+*   **Functionalities:**
+    *   Analyzing user data and identifying relevant patterns
+    *   Matching users with appropriate mental health resources
+    *   Generating personalized recommendations based on user preferences and risk factors
+*   **Technology Stack:**
+    *   **Language:** Python
+    *   **Machine Learning Libraries:** scikit-learn, TensorFlow, PyTorch
+    *   **Algorithms:** Collaborative filtering, content-based filtering, hybrid approaches
+*   **Rationale:** Python is a popular language for machine learning, and scikit-learn, TensorFlow, and PyTorch provide powerful tools for building recommendation models. The choice of algorithm depends on the specific data and the desired level of personalization.
+
+**6. Email Service Integration:**
+
+*   **Description:** Handles sending email verification and password reset emails.
+*   **Functionalities:**
+    *   Sending verification emails upon account creation
+    *   Sending password reset emails upon request
+*   **Technology Stack:**
+    *   **Email Service Provider:** SendGrid, Mailgun, or AWS SES
+*   **Rationale:** These services provide reliable and scalable email delivery, handling email sending, tracking, and deliverability issues.
+
+**7. Monitoring and Logging Component:**
+
+*   **Description:** Monitors system performance, logs user activity, and identifies potential security issues.
+*   **Functionalities:**
+    *   Collecting and storing logs
+    *   Monitoring system metrics (CPU usage, memory usage, response time, etc.)
+    *   Generating alerts for critical events
+    *   Creating dashboards for visualizing key metrics
+*   **Technology Stack:**
+    *   **Monitoring Tools:** Prometheus, Grafana, ELK Stack (Elasticsearch, Logstash, Kibana)
+*   **Rationale:** These tools provide comprehensive monitoring and logging capabilities, allowing administrators to track system performance, identify potential issues, and ensure the security and availability of the chatbot.
+
+**8. Security Component:**
+
+*   **Description:** Ensures the security of the chatbot and user data.
+*   **Functionalities:**
+    *   Authentication and authorization
+    *   Data encryption (in transit and at rest)
+    *   Input validation and output encoding
+    *   Regular security audits
+*   **Technology Stack:**
+    *   **Authentication/Authorization:** JSON Web Tokens (JWT), OAuth 2.0
+    *   **Encryption:** AES-256 (for data at rest), HTTPS (for data in transit)
+    *   **Security Libraries:** OWASP ZAP, Snyk
+*   **Rationale:** JWT and OAuth 2.0 provide secure authentication and authorization mechanisms. AES-256 encryption protects data at rest, and HTTPS ensures secure communication. Security libraries help identify and address potential vulnerabilities.
+
+**9. Cloud Platform:**
+
+*   **Description:** Provides the infrastructure for hosting and running the chatbot.
+*   **Technology Stack:**
+    *   **Cloud Provider:** AWS, Google Cloud Platform, Azure
+*   **Rationale:** These platforms offer a wide range of services, including compute, storage, networking, and databases, making it easy to deploy and scale the chatbot.
+
+This component mapping and technology selection provides a comprehensive overview of the technologies required to build the Mental Health Support Chatbot. The specific choices may vary depending on the project's specific requirements and constraints.
+```

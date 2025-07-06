@@ -1,0 +1,106 @@
+```mermaid
+graph LR
+    subgraph User
+        A[User]
+    end
+
+    subgraph Frontend
+        B[Login Page]
+        C[Signup Page]
+        D[Chat Interface]
+        E[Password Reset Page]
+        F[Account Settings Page]
+    end
+
+    subgraph Backend
+        G[Authentication Service]
+        H[Chat Service]
+        I[User Management Service]
+        J[Password Reset Service]
+        K[Account Deletion Service]
+        L[API Gateway]
+    end
+
+    subgraph Database
+        M[User Database]
+        N[Chat History Database]
+        O[Resource Database]
+    end
+
+    subgraph NLP Engine
+        P[NLP Engine]
+    end
+
+    subgraph Recommendation Engine
+        Q[Recommendation Engine]
+    end
+
+    subgraph Email Service
+        R[Email Service]
+    end
+
+    %% Account Creation Flow
+    A -- "1. Enters signup details" --> C
+    C -- "2. Sends signup request" --> L
+    L -- "3. Routes to User Management Service" --> I
+    I -- "4. Validates user data" --> I
+    I -- "5. Creates user account" --> M
+    M -- "6. Account created confirmation" --> I
+    I -- "7. Returns success message" --> L
+    L -- "8. Returns success to Frontend" --> C
+    C -- "9. Account created notification" --> A
+
+    %% Login Flow
+    A -- "1. Enters login credentials" --> B
+    B -- "2. Sends login request" --> L
+    L -- "3. Routes to Authentication Service" --> G
+    G -- "4. Authenticates user" --> M
+    M -- "5. Returns user details" --> G
+    G -- "6. Generates authentication token" --> L
+    L -- "7. Returns token to Frontend" --> B
+    B -- "8. Stores token and redirects to Chat Interface" --> D
+    D -- "9. User logged in" --> A
+
+    %% Chat Interaction Flow
+    A -- "1. Sends message" --> D
+    D -- "2. Sends message to Backend" --> L
+    L -- "3. Routes to Chat Service" --> H
+    H -- "4. Stores message in Chat History" --> N
+    H -- "5. Sends message to NLP Engine" --> P
+    P -- "6. Analyzes message and identifies intent" --> H
+    H -- "7. Sends message and intent to Recommendation Engine" --> Q
+    Q -- "8. Generates relevant recommendations" --> H
+    H -- "9. Retrieves resources from Resource DB" --> O
+    H -- "10. Formats response with recommendations and resources" --> L
+    L -- "11. Returns response to Frontend" --> D
+    D -- "12. Displays response to User" --> A
+
+    %% Password Reset Flow
+    A -- "1. Requests password reset" --> E
+    E -- "2. Sends email request" --> L
+    L -- "3. Routes to Password Reset Service" --> J
+    J -- "4. Verifies user email" --> M
+    M -- "5. Generates reset token" --> J
+    J -- "6. Sends reset link to user email" --> R
+    R -- "Email sent to user" --> A
+    A -- "7. Clicks reset link and enters new password" --> E
+    E -- "8. Sends new password and token" --> L
+    L -- "9. Routes to Password Reset Service" --> J
+    J -- "10. Validates token and updates password" --> M
+    M -- "11. Password updated confirmation" --> J
+    J -- "12. Returns success message" --> L
+    L -- "13. Returns success to Frontend" --> E
+    E -- "14. Password reset confirmation" --> A
+
+    %% Account Deletion Flow
+    A -- "1. Requests account deletion" --> F
+    F -- "2. Sends deletion request" --> L
+    L -- "3. Routes to Account Deletion Service" --> K
+    K -- "4. Authenticates user" --> M
+    M -- "5. Verifies user account" --> K
+    K -- "6. Deletes user account and data" --> M
+    N -- "7. Deletes user chat history" --> K
+    K -- "8. Account deletion confirmation" --> L
+    L -- "9. Returns success message" --> F
+    F -- "10. Account deletion confirmation" --> A
+```
