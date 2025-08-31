@@ -1,4 +1,4 @@
-# 📄 Automated SDLC Document Generator using Agentic AI
+# 📄 Automated SDLC Document Generator using Agentic AI 
 
 A fully automated multi-agent system that generates, reviews, and formats all key SDLC (Software Development Life Cycle) documents — from Requirements to User Stories, PDD, SDD, Test Cases, and more — using CrewAI, real-time voice input, a SadTalker-powered interactive avatar, and a score-driven feedback loop. Final documents are auto-pushed to GitHub for seamless access and team collaboration.
 
