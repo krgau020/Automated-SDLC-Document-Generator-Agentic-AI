@@ -123,7 +123,7 @@ Speak your input → approve flowchart → agents generate documents → get liv
 ✅ PDD (Project Design Document)  
 ✅ SDD (Software Design Document)  
 ✅ Test Cases  
-✅ Flowcharts & Risk Analysis  
+✅ Flowcharts & Risk Analysis 
 ✅ Word doc & auto-upload
 
 ---
